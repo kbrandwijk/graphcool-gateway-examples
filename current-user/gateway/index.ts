@@ -13,6 +13,7 @@ import { delegateHelper } from './helpers'
 
 async function run() {
 
+  // Set up graphql-request as fetcher with Authorization header
   const fetcher = endpoint => ({ query, variables, operationName, context }) => {
     let options;
     if (context && context.graphqlContext && context.graphqlContext.token) {
@@ -22,7 +23,7 @@ async function run() {
     return new GraphQLClient(endpoint, options).request(query, variables).then(data => { return { data } })
   };
 
-  // Create schemas from remote endpoints
+  // Create schema from remote endpoint
   const graphcoolEndpoint = process.env.GRAPHCOOL_ENDPOINT
   const graphcoolLink = fetcher(graphcoolEndpoint)
   const graphcoolSchema = makeRemoteExecutableSchema({
@@ -30,25 +31,25 @@ async function run() {
     fetcher: graphcoolLink,
   });
 
-  // Extend the schemas to link them together
+  // Extend the schema
   const extraTypeDefs = `
   extend type Query {
     myUser: MyUser
   }
   `;
 
+  // Define the resolvers for each field
   const userResolver = mergeInfo => ({
     Query: {
       myUser: {
         async resolve(parent, args, context, info) {          
-          const query = gql`
+          const query = `
             query {
               validateToken {
                 nodeId
                 typeName
               }
-            }
-          `
+            }`
           
           const auth = await delegateHelper(mergeInfo).fromQuery(query, {}, context, info)
 
@@ -71,6 +72,7 @@ async function run() {
     }),
   });
 
+  // Put Authorization header from Express context into GraphqlContext
   const buildOptions = (req, res) => {
     return { 
       context: { token: req.headers.authorization },

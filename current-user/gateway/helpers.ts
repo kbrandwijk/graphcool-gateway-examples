@@ -1,11 +1,10 @@
 import { DocumentNode, GraphQLResolveInfo, OperationDefinitionNode, parse, FieldNode } from 'graphql'
 
-
 /*
 mergeInfo.delegate only allows you to pass in an operationName and variables.
 It does not allow you to define query fields, because they are inferred from the user query.
 If you need to delegate a query that is unrelated to the user query, you need to provide
-the fields you need. This helper does that, based on a gql query.
+the fields you need. This helper does that, based on a provided query.
  */
 export const delegateHelper = mergeInfo => ({
     fromQuery: async (
