@@ -1,0 +1,8 @@
+type SignInPayload {
+  id: String!
+  token: String!
+}
+
+extend type Mutation {
+  signin(name: String): SignInPayload
+}

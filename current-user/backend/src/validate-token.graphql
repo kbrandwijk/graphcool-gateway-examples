@@ -1,0 +1,8 @@
+type ValidateTokenPayload {
+  nodeId: String!
+  typeName: String!
+}
+
+extend type Query {
+  validateToken: ValidateTokenPayload
+}
