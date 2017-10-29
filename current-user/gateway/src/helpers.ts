@@ -19,7 +19,10 @@ export const delegateHelper = mergeInfo => ({
             const operationName:string = (operationDefinition.selectionSet.selections[0] as any).name.value
             const fields: [FieldNode] = (operationDefinition.selectionSet.selections[0] as any).selectionSet.selections
   
+            console.log(fields)
+
             const newInfo: GraphQLResolveInfo = JSON.parse(JSON.stringify(info));
+            console.log(newInfo.fieldNodes[0])
             newInfo.fieldNodes[0].selectionSet!.selections = fields
   
             return await mergeInfo.delegate(
