@@ -6,16 +6,16 @@ export default async event => {
   const graphcool = fromEvent(event)
   const api = graphcool.api('simple/v1')
 
-  const createMyUserMutation = `
+  const createUserMutation = `
     mutation($name: String!) {
-      createMyUser(name: $name) {
+      createUser(name: $name) {
         id
       }
     }`
 
-  const result:any = await api.request(createMyUserMutation, { name })
-  const id:string = result.createMyUser.id
-  const token = await graphcool.generateNodeToken(id, "MyUser")
+  const result:any = await api.request(createUserMutation, { name })
+  const id:string = result.createUser.id
+  const token = await graphcool.generateNodeToken(id, "User")
     
   return {
     data: {

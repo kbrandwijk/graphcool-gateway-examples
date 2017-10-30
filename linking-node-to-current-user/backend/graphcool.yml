@@ -1,0 +1,19 @@
+types: ./types.graphql
+
+functions:
+  # Dummy auth method that creates a new user and returns token
+  signin:
+    handler:
+      code: src/signin.ts
+    type: resolver
+    schema: src/signin.graphql
+
+  # Helper method to get the values from a Graphcool token in a secure way
+  validateToken:
+    handler:
+      code: src/validate-token.ts
+    type: resolver
+    schema: src/validate-token.graphql
+
+permissions:
+- operation: "*"

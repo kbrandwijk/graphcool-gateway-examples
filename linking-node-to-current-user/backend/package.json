@@ -1,0 +1,9 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "My Graphcool Service",
+  "dependencies": {
+    "console-remote-client": "^0.4.3",
+    "graphcool-lib": "^0.1.4"
+  }
+}

@@ -1,7 +1,7 @@
 import { makeRemoteExecutableSchema, introspectSchema, mergeSchemas } from 'graphql-tools'
 import { GraphQLClient } from 'graphql-request'
 
-import { delegateHelper } from './helpers'
+import myUser from './myUser'
 
 const endpoint = process.env.GRAPHCOOL_ENDPOINT
 
@@ -34,24 +34,11 @@ export const schema = async () => {
   const userResolver = mergeInfo => ({
     Query: {
       myUser: {
-        async resolve(parent, args, context, info) {          
-          const query = `
-            query {
-              validateToken {
-                nodeId
-                typeName
-              }
-            }`
-          
-          const auth = await delegateHelper(mergeInfo).fromQuery(query, {}, context, info)
+        async resolve(parent, args, context, info) {
+          const event = { mergeInfo, parent, args, context, info}
+          return await myUser(event)
 
-          if (auth.typeName === 'MyUser') {
-            return mergeInfo.delegate(
-              'query', 'MyUser', { id: auth.nodeId }, context, info
-            )
-          }
           
-          return null
         }
       }
     }
