@@ -1,40 +1,36 @@
 import { GraphQLSchema, GraphQLResolveInfo } from 'graphql'
 import { lowerFirst } from 'lodash'
-import { mergeSchemas } from 'graphql-tools'
 import { delegateHelper } from './delegateHelper'
 
-export function addCurrentNodeQuery(schema: GraphQLSchema, tokenNodeType): GraphQLSchema {
+export function createCurrentNodeQuery(schema: GraphQLSchema, tokenNodeType): { typeDefs?, resolver? } {
   // The new query name starts with lowercase
   const newQueryName: string = lowerFirst(tokenNodeType)
 
   // Check if the query already exists (for example, for the User Type)
-  const fieldExists: boolean = schema.getQueryType().getFields()[newQueryName] !== undefined
-
-  let finalSchema: GraphQLSchema = schema
-  if (!fieldExists) {
-
+  const queryExists: boolean = schema.getQueryType().getFields()[tokenNodeType] !== undefined
+  const newQueryExists: boolean = schema.getQueryType().getFields()[newQueryName] !== undefined
+  
+  if (queryExists && !newQueryExists) {
     // Add the new query to the Query type
-    const currentNodeTypeDefs = `
+    const typeDefs = `
       extend type Query {
         ${newQueryName}: ${tokenNodeType}
       }`
 
-    // Merge the new query into the type, specifying the resolver
-    finalSchema = mergeSchemas({
-      schemas: [schema, currentNodeTypeDefs],
-      resolvers: mergeInfo => ({
-        Query: {
-          [newQueryName]: {
-            async resolve(parent, args, context, info) {
-              return await currentNodeResolver(tokenNodeType)(mergeInfo, parent, args, context, info)
-            }
+    const resolver = mergeInfo => ({
+      Query: {
+        [newQueryName]: {
+          async resolve(parent, args, context, info) {
+            return await currentNodeResolver(tokenNodeType)(mergeInfo, parent, args, context, info)
           }
         }
-      })
+      }
     })
+
+    return { typeDefs , resolver }
   }
 
-  return finalSchema
+  throw new Error(`Query '${tokenNodeType}' not found, or query '${newQueryName}' already exists`)
 }
 
 // Implementation of the resolver function
