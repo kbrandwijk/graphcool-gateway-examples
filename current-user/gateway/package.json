@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon --ext ts --exec node ./node_modules/ts-node/dist/bin ./src/server.ts"
+    "start": "./node_modules/.bin/ts-node ./src/server.ts"
   },
   "dependencies": {
     "apollo-engine": "^0.5.0",

@@ -1,7 +1,6 @@
-import { makeRemoteExecutableSchema, introspectSchema, mergeSchemas } from 'graphql-tools'
+import { makeRemoteExecutableSchema, introspectSchema } from 'graphql-tools'
 import { GraphQLClient } from 'graphql-request'
-
-import myUser from './myUser'
+import { addCurrentNodeQuery } from './currentNodeQuery'
 
 const endpoint = process.env.GRAPHCOOL_ENDPOINT
 
@@ -23,31 +22,7 @@ export const schema = async () => {
     fetcher: graphcoolLink,
   });
 
-  // Extend the schema
-  const extraTypeDefs = `
-  extend type Query {
-    myUser: MyUser
-  }
-  `;
+  const schema = addCurrentNodeQuery(graphcoolSchema, 'MyUser')
 
-  // Define the resolvers for each field
-  const userResolver = mergeInfo => ({
-    Query: {
-      myUser: {
-        async resolve(parent, args, context, info) {
-          const event = { mergeInfo, parent, args, context, info}
-          return await myUser(event)
-
-          
-        }
-      }
-    }
-  })
-
-  return mergeSchemas({
-    schemas: [graphcoolSchema, extraTypeDefs],
-    resolvers: mergeInfo => ({
-      ...userResolver(mergeInfo),
-    }),
-  }); 
+  return schema
 }

@@ -5,3 +5,4 @@ yarn.lock
 yarn-error.log
 .vscode
 gateway.yml
+test.ts
