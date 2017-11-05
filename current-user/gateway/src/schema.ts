@@ -24,7 +24,7 @@ export const schema = async () => {
     fetcher: graphcoolLink,
   });
 
-  const { typeDefs, resolver } = createCurrentNodeQuery(graphcoolSchema, 'Boo')
+  const { typeDefs, resolver } = createCurrentNodeQuery(graphcoolSchema, 'MyUser')
 
   const finalSchema = mergeSchemas({
     schemas: [schema, typeDefs],
