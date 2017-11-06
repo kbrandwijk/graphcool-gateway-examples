@@ -1,0 +1,6 @@
+types: ./types.graphql
+
+permissions:
+- operation: Page.read
+- operation: Image.read
+- operation: TextBlock.read

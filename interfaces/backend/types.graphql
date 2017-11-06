@@ -1,0 +1,19 @@
+type Page @model {
+    id: ID! @isUnique
+    textBlocks: [TextBlock!]! @relation(name: "TextBlockOnPage")
+    images: [Image!]! @relation(name: "ImageOnPage")
+}
+
+type TextBlock @model {
+    id: ID! @isUnique
+    position: Int!
+    title: String!
+    page: Page @relation(name: "TextBlockOnPage")
+}
+
+type Image @model {
+    id: ID! @isUnique
+    position: Int!
+    imageUrl: String!
+    page: Page @relation(name: "ImageOnPage")
+}
